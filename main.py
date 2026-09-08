@@ -1,6 +1,7 @@
 import pygame
 
 from src.player import Player
+from src.map import GameMap
 
 pygame.init()
 
@@ -16,6 +17,7 @@ pygame.display.set_caption("Totally real not fake doom")
 clock = pygame.time.Clock()
 
 player = Player(400, 300)
+gameMap = GameMap()
 
 running = True
 
@@ -30,6 +32,7 @@ while running:
     
     screen.fill("black")
     
+    gameMap.draw(screen)
     player.draw(screen)
     
     pygame.display.flip()
