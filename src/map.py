@@ -23,10 +23,10 @@ class GameMap:
             for x, title in enumerate(row):
                 if title == "#":
                     rect = pygame.Rect(
-                            x * self.title_size,
-                            y * self.title_size,
-                            self.title_size,
-                            self,self.title_size
+                        x * self.title_size,
+                        y * self.title_size,
+                        self.title_size,
+                        self,self.title_size
                     )
                         
                     pygame.draw.rect(screen, "gray", rect)
