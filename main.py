@@ -7,17 +7,11 @@ doom = DoomEngine(
     "assets/freedoom1.wad"
 )
 
-# doomWidth = 320
-# doomHeight = 200
 
-scale = 3
 
 screen = pygame.display.set_mode(
-    (
-        doom.width * scale,
-        doom.height * scale
-
-    )
+    (0, 0),
+    pygame.FULLSCREEN  
 )
 
 pygame.display.set_caption("Totally real not fake doom")
@@ -48,13 +42,31 @@ while running:
         (doom.width, doom.height),
         "BGRA"
     )
+    
+    window_width, window_height = screen.get_size()
+    
+    maxScale = 3
+    
+    scale = min(
+        window_width / doom.width,
+        window_height / doom.height,
+        maxScale
+    )
+    
+    scaledWidth = int(doom.width * scale)
+    scaledheight = int(doom.height * scale)
         
     scaled_surface = pygame.transform.scale(
         doom_surface,
-        (doom.width * scale, doom.height * scale)
+        (scaledWidth, scaledheight)
     )
+    
+    x = (window_width - scaledWidth) // 2
+    y = (window_height - scaledheight) // 2
+    
+    screen.fill((0, 0, 0))
         
-    screen.blit(scaled_surface, (0, 0))
+    screen.blit(scaled_surface, (x, y))
         
     pygame.display.flip()
     
