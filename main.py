@@ -34,6 +34,8 @@ while running:
         if event.type == pygame.QUIT:
             running = False
             
+        doom.handle_event(event)
+            
         
     doom.tick()
         

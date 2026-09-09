@@ -1,6 +1,9 @@
 import ctypes
 import time
 from pathlib import Path
+from collections import deque
+
+import pygame
 
 
 class DGCallbacks(ctypes.Structure):
@@ -53,6 +56,8 @@ DGCallbacks._fields_ = [
 class DoomEngine:
 
     def __init__(self, wad_path):
+        
+        self.key_queue = deque()
 
         if not DLL_PATH.exists():
             raise FileNotFoundError(
@@ -174,8 +179,14 @@ class DoomEngine:
         return int(time.monotonic() * 1000) & 0xFFFFFFFF
 
     def _get_key(self, pressed, doom_key):
-        # Keyboard input will be added next.
-        return 0
+        if not self.key_queue:
+            return 0
+        
+        key_pressed, key = self.key_queue.popleft()
+        
+        pressed[0] = key_pressed
+        doom_key[0] = key
+        return 1
 
     def _set_window_title(self, title):
         if title:
@@ -186,6 +197,136 @@ class DoomEngine:
                 )
             except UnicodeDecodeError:
                 pass
+    
+    
+    # Key functions
+    
+    def handle_event(self, event):
+
+        if event.type == pygame.KEYDOWN:
+
+            doom_key = self._translate_key(event.key)
+
+            if doom_key is not None:
+                self.key_queue.append((1, doom_key))
+
+        elif event.type == pygame.KEYUP:
+
+            doom_key = self._translate_key(event.key)
+
+            if doom_key is not None:
+                self.key_queue.append((0, doom_key))
+
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+
+            if event.button == 1:
+                self.key_queue.append((1, 0xA3))
+
+        elif event.type == pygame.MOUSEBUTTONUP:
+
+            if event.button == 1:
+                self.key_queue.append((0, 0xA3))
+
+    
+    def _translate_key(self, key):
+
+
+    # Movement
+
+
+    # Forward
+        if key == pygame.K_w:
+            return 0xAD
+
+        if key == pygame.K_UP:
+            return 0xAD
+
+        # Backward
+        if key == pygame.K_s:
+            return 0xAF
+
+        if key == pygame.K_DOWN:
+            return 0xAF
+
+        # Strafe left
+        if key == pygame.K_a:
+            return 0xA0
+
+        # Strafe right
+        if key == pygame.K_d:
+            return 0xA1
+        
+        if key == pygame.K_LSHIFT:
+            return 0xB6
+
+
+
+        # Turning
+
+
+        if key == pygame.K_q:
+            return 0xAC
+
+        if key == pygame.K_e:
+            return 0xAE
+
+
+        # Actions
+
+
+        # Fire
+        if key == pygame.K_LCTRL:
+            return 0xA3
+
+        # Use / open doors
+        if key == pygame.K_SPACE:
+            return 0xA2
+
+
+        # Menu
+
+
+        if key == pygame.K_ESCAPE:
+            return 27
+
+        if key == pygame.K_RETURN:
+            return 13
+
+
+        # Automap
+
+
+        if key == pygame.K_TAB:
+            return 9
+
+
+        # Weapon selection
+
+
+        if key == pygame.K_1:
+            return ord("1")
+
+        if key == pygame.K_2:
+            return ord("2")
+
+        if key == pygame.K_3:
+            return ord("3")
+
+        if key == pygame.K_4:
+            return ord("4")
+
+        if key == pygame.K_5:
+            return ord("5")
+
+        if key == pygame.K_6:
+            return ord("6")
+
+        if key == pygame.K_7:
+            return ord("7")
+
+        return None
+
+
 
     # =====================================================
     # Framebuffer
