@@ -6,3 +6,5 @@ assets
 doomkit
 doomgeneric
 .savegame
+*.png
+*.wad
